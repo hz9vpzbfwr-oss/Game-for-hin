@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小學四年級人文科溫習大作戰 - Chiikawa可愛風</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Noto+Sans+TC:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', 'Comic Neue', sans-serif;
+            background-color: #FFF0F5;
+            background-image: 
+                radial-gradient(#FFD1DC 20%, transparent 20%),
+                radial-gradient(#FFE4E1 20%, transparent 20%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #5D4037;
+        }
+
+        .game-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 6px solid #FFB7C5;
+            border-radius: 30px;
+            box-shadow: 0 10px 20px rgba(255, 183, 197, 0.4);
+            width: 100%;
+            max-width: 650px;
+            padding: 30px;
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        h1 {
+            color: #FF6B8B;
+            font-size: 26px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px #FFE4E1;
+        }
+
+        .topic-badge {
+            background-color: #FFE5B4;
+            color: #D2691E;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+            border: 2px dashed #FFB7C5;
+        }
+
+        .progress-box {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background-color: #FFF9E6;
+            padding: 10px 20px;
+            border-radius: 15px;
+            border: 2px solid #FFE0B2;
+        }
+
+        .score-num { color: #FF6B8B; }
+
+        .question-text {
+            font-size: 19px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #4A3728;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background-color: #FFFFFF;
+            border: 3px solid #E0E0E0;
+            border-radius: 18px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #5D4037;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            box-shadow: 0 4px 0 #E0E0E0;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #FFF3F5;
+            border-color: #FFB7C5;
+            box-shadow: 0 4px 0 #FFB7C5;
+            transform: translateY(-2px);
+        }
+
+        .option-btn:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 0px 0 #FFB7C5;
+        }
+
+        .option-btn.correct {
+            background-color: #E8F5E9 !important;
+            border-color: #81C784 !important;
+            box-shadow: 0 4px 0 #81C784 !important;
+            color: #2E7D32 !important;
+        }
+
+        .option-btn.wrong {
+            background-color: #FFEBEE !important;
+            border-color: #E57373 !important;
+            box-shadow: 0 4px 0 #E57373 !important;
+            color: #C62828 !important;
+        }
+
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback-box.correct-bg { background-color: #E8F5E9; color: #2E7D32; border: 2px dashed #81C784; }
+        .feedback-box.wrong-bg { background-color: #FFEBEE; color: #C62828; border: 2px dashed #E57373; }
+
+        .next-btn, .start-btn {
+            background-color: #FF6B8B;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #D84B6B;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .welcome-avatar { font-size: 70px; margin: 20px 0; }
+        .evaluation-text { font-size: 22px; color: #FF6B8B; font-weight: bold; margin: 20px 0; }
+        .summary-box { background-color: #FFF9E6; border-radius: 20px; padding: 20px; margin: 20px 0; border: 2px solid #FFE0B2; text-align: left; line-height: 1.8; }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 歡迎畫面 -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-avatar">(๑•  Apica •๑)</div>
+        <h1>四年級人文科溫習大作戰</h1>
+        <p style="font-size: 16px; color: #795548; line-height: 1.6;">
+            哈囉！歡迎來到超可愛的溫習小世界！(◍•ᴗ•◍)<br>
+            總共有 <b>50 題</b> 精選挑戰，答對一題可得 <b>2 分</b>！<br>
+            準備好成為熱愛學習的「問答大師」了嗎？
+        </p>
+        <button class="start-btn" id="start-game-btn">填飽肚子，開始挑戰！ ✨</button>
+    </div>
+
+    <!-- 遊戲進行畫面 -->
+    <div id="game-screen" class="screen">
+        <div id="topic-badge" class="topic-badge">主題載入中...</div>
+        <div class="progress-box">
+            <div>題目：<span id="current-question-num" class="score-num">1</span> / 50</div>
+            <div>目前得分：<span id="current-score" class="score-num">0</span> 分</div>
+        </div>
+        <div id="question-text" class="question-text">這是題目內容？</div>
+        <div class="options-grid" id="options-container"></div>
+        <div id="feedback-box" class="feedback-box"></div>
+        <button id="next-btn" class="next-btn" style="display: none;">下一題 Go! 🐾</button>
+    </div>
+
+    <!-- 結算畫面 -->
+    <div id="result-screen" class="screen">
+        <div class="welcome-avatar">٩(ˊᗜˋ*)ו</div>
+        <h1>大功告成！全體通關！</h1>
+        <div class="summary-box">
+            <p>最終總得分：<span id="final-score" style="font-size: 24px; color: #FF6B8B; font-weight: bold;">0</span> 分</p>
+            <p>答對題數：<span id="correct-count">0</span> 題 / 50 題</p>
+        </div>
+        <div id="evaluation-text" class="evaluation-text">給予評價中...</div>
+        <button class="start-btn" id="restart-game-btn">重新挑戰 ✿</button>
+    </div>
+</div>
+
+<script>
+// 50題庫縮略展示（與下載檔內完整50題完全一致，此處為結構範例）
+const questionBank = [
+    { topic: "4下12課 香港故事之旅", q: "香港實行了哪一項政策，吸引了大量商人來香港發展貿易？", options: ["限制外貿政策", "自由港政策", "重税政策", "封閉海島政策"], answer: 1, feedback: "太棒了！自由港政策免徵關稅，讓香港成為貿易中轉站！" },
+    { topic: "4下12課 香港故事之旅", q: "在香港開埠之前，當地的居民最主要的傳統經濟活動是什麼？", options: ["高科技電子業", "金融股票投資", "漁業與農業", "汽車製造業"], answer: 2, feedback: "沒錯！開埠前香港主要依賴捕魚、採珠和耕種為生。" },
+    { topic: "4下12課 香港故事之旅", q: "開埠前，吐露港一帶曾以哪一種珍貴的天然資源採集活動而聞名？", options: ["採摘荔枝", "開採金礦", "採珠（珍珠）", "採集石油"], answer: 2, feedback: "古代的吐露港可是著名的採珠勝地唷！" },
+    { topic: "4下12課 香港故事之旅", q: "香港的哪一個離島以傳統「製鹽」業而聞名，現在還保留了珍貴的鹽田？", options: ["長洲", "鹽田梓", "南丫島", "坪洲"], answer: 1, feedback: "答對了！鹽田梓以前就是靠製鹽傳承家族的喔！" },
+    { topic: "4下12課 香港故事之旅", q: "早期的漁民為了祈求海上平安、捕魚順利，最常建立並膜拜哪一座廟宇？", options: ["車公廟", "文武廟", "天后廟", "黃大仙祠"], answer: 2, feedback: "天后娘娘是漁民的守護神！" },
+    { topic: "4下12課 香港故事之旅", q: "新界的「錦田」在歷史上以哪一種傳統經濟活動為主？", options: ["耕種（農業）", "碼頭搬運", "象牙雕刻", "紡織服裝"], answer: 0, feedback: "錦田土地肥沃，早期的居民大多在這裡辛勤耕種。" },
+    { topic: "4下12課 香港故事之旅", q: "香港開埠之「後」，隨著貿易發展，哪一種職業在「港口」變得非常重要？", options: ["搬運工人", "電腦工程師", "飛機駕駛員", "銀行櫃檯員"], answer: 0, feedback: "港口繁忙，全靠辛苦的搬運工人流汗上下貨物呢！" },
+    { topic: "4下12課 香港故事之旅", q: "香港擁有優越的什麼地理條件，使其能發展成世界聞名的港口？", options: ["高聳的山脈", "天然的廣闊海灣與深水港", "無邊無際的沙漠", "冰天雪地的環境"], answer: 1, feedback: "維多利亞港就是一個極佳的天然深水海灣！" },
+    { topic: "4下12課 香港故事之旅", q: "下列哪一項是香港實施「自由港政策」帶來的直接正面影響？", options: ["大家不用上學了", "促進了發展貿易與經濟繁榮", "耕種面積大量增加", "捕魚量世界第一"], answer: 1, feedback: "自由港吸引了世界各地的商品與資金！" },
+    { topic: "4下12課 香港故事之旅", q: "在漁民的生活中，天后廟除了用來祈福，還具備什麼社會功能？", options: ["漁民舉辦婚禮和商議大事的場所", "用來停泊漁船的碼頭", "售賣新鮮海鮮的市場", "製造漁網的工廠"], answer: 0, feedback: "廟宇在過去是村民聚會、商議公共事務的重要中心。" },
+    { topic: "4下12課 香港故事之旅", q: "促使香港從「開埠前」的小漁村轉變為港口城市的關鍵是什麼？", options: ["全島進行大規模耕種", "自由港政策與對外開放貿易", "發現了大量金礦", "大力發展採珠業"], answer: 1, feedback: "開放的貿易政策和天然地理優勢，讓香港成功華麗轉身！" },
+    { topic: "4下12課 香港故事之旅", q: "鹽田梓的居民利用什麼來製鹽？", options: ["井水", "地下礦物", "海水", "高山雪水"], answer: 2, feedback: "利用太陽曬乾引進的「海水」，就能結晶成食鹽。" },
+    { topic: "4下12課 香港故事之旅", q: "香港故事之旅中提到，港口的繁榮與下列哪一組詞彙的「前後變遷」關係最密切？", options: ["網作->改圖", "開埠前漁業 -> 開埠後港口與搬運工人", "貪污->廉政公署", "基本法->憲法"], answer: 1, feedback: "體現了香港從早期的漁業環境過渡到國際商港的發展史！" },
+
+    // 4下13課 香港社會的變遷
+    { topic: "4下13課 香港社會的變遷", q: "在昔日的香港，居民最普遍的娛樂活動之一是去哪裡「看大戲」？", options: ["電影院", "戲棚", "數碼遊樂場", "體育館"], answer: 1, feedback: "以前的人會用竹子搭起臨時的「戲棚」，一起開心地看大戲！" },
+    { topic: "4下13課 香港社會的變遷", q: "1960-1970年代的香港，社會上面臨嚴重的什麼風氣，導致市民生活遇到極大不公？", options: ["節約風氣", "貪污風氣", "閱讀風氣", "環保風氣"], answer: 1, feedback: "當時很多政府部門都有貪污風氣，市民辦事經常被勒索「茶錢」。" },
+    { topic: "4下13課 香港社會的變遷", q: "為了解決嚴重的貪污問題，香港政府在1974年成立了哪一個獨立機構？", options: ["天文台", "廉政公署 (ICAC)", "醫院管理局", "房屋署"], answer: 1, feedback: "廉政公署打擊貪污毫不手軟，讓香港變成了廉潔城市！" },
+    { topic: "4下13課 香港社會的變遷", q: "過去香港曾多次遭遇嚴重旱災，市民面臨什麼極大的生活難題？", options: ["電力不足", "食水不足（缺水）", "連不到網絡", "課本不夠"], answer: 1, feedback: "當時甚至要每四天供水四小時，大家都要拿著水桶到街上排隊裝水！" },
+    { topic: "4下13課 香港社會的變遷", q: "為了解決香港長期以來的「食水不足」危機，政府推行了哪項重大工程？", options: ["向天發射人工降雨彈", "大量購買樽裝水", "從內地輸入東江水", "把維港的水煮沸"], answer: 2, feedback: "「輸入東江水」工程極大地解決了香港數百萬市民的用水問題！" },
+    { topic: "4下13課 香港社會的變遷", q: "早期大量人口湧入香港，導致基層市民的居住環境變得如何？", options: ["寬敞舒適", "非常擠迫", "全部住進別墅", "科技感十足"], answer: 1, feedback: "當時很多人擠在木屋區或狹窄的唐樓裡，居住環境非常擠迫。" },
+    { topic: "4下13課 香港社會的變遷", q: "政府為了改善基層市民「擠迫」的居住環境，大量興建了哪一種房屋？", options: ["私人豪宅", "公共房屋（公屋）", "度假村酒店", "太空艙旅館"], answer: 1, feedback: "公共房屋的興建，讓百萬市民有了安居樂業、環境乾淨的家！" },
+    { topic: "4下13課 香港社會的變遷", q: "「看大戲」通常是指欣賞哪一種中國傳統表演藝術？", options: ["芭蕾舞", "粵劇（傳統戲曲）", "魔術表演", "流行音樂會"], answer: 1, feedback: "粵劇演員穿著華麗戲服在戲棚內載歌載舞，是老一輩香港人的珍貴回憶！" },
+    { topic: "4下13課 香港社會的變遷", q: "廉政公署的英文縮寫是什麼？", options: ["FBI", "ICAC", "WHO", "UNESCO"], answer: 1, feedback: "答對了！廉政公署就是 ICAC！" },
+    { topic: "4下13課 香港社會的變遷", q: "下列哪一個是香港昔日與現代「娛樂方式」的對比？", options: ["昔日看大戲，現代看電影/玩遊戲", "昔日輸入東江水，現代用井水", "昔日住公屋，現代住木屋", "昔日自由港，現代封閉港"], answer: 0, feedback: "隨著科技發展，我們的娛樂變得越來越多元化囉！" },
+    { topic: "4下13課 香港社會的變遷", q: "下列哪一項不是公共房屋帶給香港社會的好處？", options: ["改善居住衛生環境", "減輕基層家庭的租金負擔", "讓每個人免費變成億萬富翁", "提供更安全的社區"], answer: 2, feedback: "公屋提供的是安穩的住所，發家致富還是要靠努力工作唷！" },
+    { topic: "4下13課 香港社會的變遷", q: "香港「制水」期間，市民在街上排隊最常用的口號或俗語是什麼？", options: ["樓下閂水喉！", "大家來網購！", "今天看大戲！", "一國兩制好！"], answer: 0, feedback: "「樓下閂水喉」是香港經典的集體回憶。" },
+
+    // 4下14課 一國兩制
+    { topic: "4下14課 一國兩制", q: "提出「一國兩制」偉大構想，成功解決香港歷史遺留問題的中國領導人是誰？", options: ["毛澤東", "鄧小平", "孫中山", "周恩來"], answer: 1, feedback: "鄧小平爺爺提出「一國兩制」，讓香港在1997年順利回歸祖國！" },
+    { topic: "4下14課 一國兩制", q: "香港特別行政區的憲制性文件，規定了香港制度與權利的是哪一部法律？", options: ["《刑法》", "《基本法》", "《民法典》", "《交通安全法》"], answer: 1, feedback: "《基本法》保障著我們的生活制度五十年不變！" },
+    { topic: "4下14課 一國兩制", q: "根據香港《基本法》，其最根本的「立法依據」是國家的哪一部最高法律？", options: ["《勞工法》", "《教育法》", "《憲法》", "《稅務法》"], answer: 2, feedback: "《憲法》是國家的根本大法，也是《基本法》的立法依據！" },
+    { topic: "4下14課 一國兩制", q: "下列哪一項屬於香港居民根據《基本法》所享有的「權利」之一？", options: ["必須強制去當兵", "出入境自由", "可以隨意破壞公物", "不用遵守任何法律"], answer: 1, feedback: "香港居民享有「出入境自由」，可以自由去外地旅遊再回港！" },
+    { topic: "4下14課 一國兩制", q: "香港居民可以自由選擇自己的職業，這屬於哪一項基本權利？", options: ["職業自由", "言論義務", "繳交稅款", "出入境義務"], answer: 0, feedback: "「職業自由」讓長大後的你想當什麼職業都可以自由選擇！" },
+    { topic: "4下14課 一國兩制", q: "市民可以自由參加各種合法的宗教儀式和信仰，這是保障了什麼自由？", options: ["飲食自由", "宗教信仰自由", "消遣自由", "通訊義務"], answer: 1, feedback: "「宗教信仰自由」是香港多元文化和諧共處的重要基石。" },
+    { topic: "4下14課 一國兩制", q: "生病時有醫療補助、年長時獲得社會救助，這屬於居民享有的什麼權利？", options: ["享受社會福利", "文化活動自由", "遵守秩序", "基本法義務"], answer: 0, feedback: "「享受社會福利」能讓社會上的弱勢群體得到溫暖的照顧。" },
+    { topic: "4下14課 一國兩制", q: "同學可以自由去參觀藝術展、聽音樂會、進行文學創作，這是屬於什麼權利？", options: ["繳交稅款", "遵守法規", "文化活動自由", "職業義務"], answer: 2, feedback: "「文化活動自由」讓我們的精神生活變得超級豐富多彩！" },
+    { topic: "4下14課 一國兩制", q: "享有權利的同時也必須履行義務。下列哪一項是香港居民應盡的「義務」？", options: ["職業自由", "繳交稅款", "出入境自由", "享受社會福利"], answer: 1, feedback: "「繳交稅款」是義務，政府有了稅收才能蓋學校、醫院和公園喔！" },
+    { topic: "4下14課 一國兩制", q: "在公共場所不推搡、乖乖排隊、不喧嘩，這體現了公民要履行什麼義務？", options: ["出入境自由", "宗教信仰自由", "遵守秩序", "文化活動自由"], answer: 2, feedback: "「遵守秩序」能讓每個人都有安全又舒服的公共空間！" },
+    { topic: "4下14課 一國兩制", q: "做一個好公民，絕對不能做違法的事，這叫做履行什麼義務？", options: ["遵守法規", "享受社會福利", "職業自由", "獲得資訊"], answer: 0, feedback: "「遵守法規」是每個人的底線，這樣社會才會平安穩定！" },
+    { topic: "4下14課 一國兩制", q: "在一國兩制中，「一國」和「兩制」的關係是什麼？", options: ["兩制是前提", "一國是前提，在一個中國內實行兩種制度", "兩個完全獨立的國家", "沒有任何關係"], answer: 1, feedback: "「一國」是根本、是前提，在此基礎上尊重「兩制」的差異。" },
+    { topic: "4下14課 一國兩制", q: "香港特別行政區在什麼時候正式成立？", options: ["1949年10月1日", "1997年7月1日", "2000年1月1日", "1842年8月29日"], answer: 1, feedback: "1997年7月1日香港回歸祖國！" },
+
+    // 4下15課 資訊素養
+    { topic: "4下15課 資訊素養", q: "使用「資訊科技」可以上網查閱資料、看學習影片，這屬於哪種正面影響？", options: ["沉迷網絡", "網絡欺凌", "獲得資訊（增長知識）", "形象受損"], answer: 2, feedback: "網絡是巨大的寶庫，讓我們隨時隨地都能「獲得資訊」！" },
+    { topic: "4下15課 資訊素養", q: "如果天天沒日沒夜地打網絡遊戲、不睡覺不上學，這屬於資訊科技的哪種負面影響？", options: ["獲得資訊", "沉迷網絡", "遵守法規", "享受福利"], answer: 1, feedback: "「沉迷網絡」會影響身體健康和學業，一定要控制好時間喔！" },
+    { topic: "4下15課 資訊素養", q: "在網絡上故意惡意修改別人的照片，變成醜化的圖案來嘲笑別人，這叫什麼？", options: ["「改圖」欺凌", "合法授權", "正當美術創作", "遵守秩序"], answer: 0, feedback: "惡意「改圖」會嚴重傷害他人的尊嚴，是非常不可取的行為！" },
+    { topic: "4下15課 資訊素養", q: "遭到網絡欺凌的受害者，在心理或名譽上往往會遭受什麼打擊？", options: ["心情變得非常興奮", "形象受損與打擊自信心", "視力突然變好", "獲得更多獎學金"], answer: 1, feedback: "惡意的言論會讓受害者「形象受損」並「打擊自信心」，心裡會非常難過。" },
+    { topic: "4下15課 資訊素養", q: "在網絡上看見別人被欺凌時，哪些人屬於「助長欺凌」的幫兇？", options: ["立刻舉報的同學", "隨手點讚和轉發、盲目留言嘲笑的人", "關掉電腦去睡覺的人", "打電話報警的人"], answer: 1, feedback: "盲目「點讚和轉發」或是惡意「留言」，都會成為欺凌者的幫兇！" },
+    { topic: "4下15課 資訊素養", q: "如果你不幸成為了網絡欺凌的「受害者」，你應該怎麼做才對？", options: ["躲在房間裡一直哭", "跟對方在網上用粗口對罵", "立刻向求助家人或老師", "把家裡的電腦砸碎"], answer: 2, feedback: "遇到困難一定要「求助家人/老師」，大人們一定會保護你！" },
+    { topic: "4下15課 資訊素養", q: "在網上說話、留言時，我們應該遵守什麼樣的態度？", options: ["反正沒人知道我是誰，隨便罵人", "尊重他人，言論要友善負責", "只跟長得好看的人說話", "散播未經證實的謠言"], answer: 1, feedback: "網絡世界也是公共空間，要像在現實中一樣講禮貌、守規矩！" },
+    { topic: "4下15課 資訊素養", q: "為了防止網絡賬號被盜用，下列哪種密碼設置最安全？", options: ["12345678", "自己的生日", "結合大小寫字母、數字和符號的複雜密碼", "密碼就設為 password"], answer: 2, feedback: "複雜的密碼就像堅固的盾牌，能好好保護我們的個人隱私！" },
+    { topic: "4下15課 資訊素養", q: "在網上收到陌生人發來「點擊這裡免費送你遊戲皮膚」的網址，應該怎麼辦？", options: ["太好了！立刻點擊並輸入密碼", "轉發給全班同學一起點", "不要理會，這可能是釣魚詐騙網站", "把手機泡進水裡"], answer: 2, feedback: "不明連結可能含有木馬病毒或想偷走你的賬號！" },
+    { topic: "4下15課 資訊素養", q: "健康使用電子產品的建議時間，通常是連續看螢幕多長時間就要休息一下？", options: ["連續看10小時不休息", "每20-30分鐘就要遠眺休息", "直到眼睛痛才休息", "三天三夜不睡覺"], answer: 1, feedback: "保護眼睛非常重要，要多看綠色植物和遠處放鬆眼部肌肉喔！" },
+    { topic: "4下15課 資訊素養", q: "在網絡世界中，我們在享受「獲得資訊」的權利時，不應該忘記什麼？", options: ["天天吃零食", "履行健康上網、不欺凌他人的義務", "忘記交功課", "把密碼告訴所有人"], answer: 1, feedback: "權利與義務並重，健康的網絡環境需要我們每個人共同維護！" },
+    { topic: "4下15課 資訊素養", q: "當你在網上看到一篇令人震驚的新聞時，分享前的第一步應該是什麼？", options: ["不管真假立刻轉發", "核實資訊來源是否真實可靠", "在底下留言大罵", "付錢給新聞作者"], answer: 1, feedback: "「核實資訊」是現代小學生必備的資訊素養，不造謠、不傳謠！" }
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
+let correctCount = 0;
+let shuffledQuestions = [];
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function startGame() {
+    document.getElementById('welcome-screen').classList.remove('active');
+    document.getElementById('game-screen').classList.add('active');
+    shuffledQuestions = [...questionBank];
+    shuffleArray(shuffledQuestions);
+    currentQuestionIndex = 0;
+    score = 0;
+    correctCount = 0;
+    showQuestion();
+}
+
+function showQuestion() {
+    document.getElementById('next-btn').style.display = 'none';
+    const feedbackBox = document.getElementById('feedback-box');
+    feedbackBox.style.display = 'none';
+    feedbackBox.className = 'feedback-box';
+
+    const qData = shuffledQuestions[currentQuestionIndex];
+    document.getElementById('topic-badge').innerText = qData.topic;
+    document.getElementById('current-question-num').innerText = currentQuestionIndex + 1;
+    document.getElementById('current-score').innerText = score;
+    document.getElementById('question-text').innerText = qData.q;
+    
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+    
+    const optionLabels = ['A', 'B', 'C', 'D'];
+    qData.options.forEach((optionText, index) => {
+        const button = document.createElement('button');
+        button.className = 'option-btn';
+        button.innerText = `${optionLabels[index]}. ${optionText}`;
+        // 使用修正後的直接點擊綁定
+        button.addEventListener('click', function() { checkAnswer(index); });
+        optionsContainer.appendChild(button);
+    });
+}
+
+function checkAnswer(selectedIndex) {
+    const qData = shuffledQuestions[currentQuestionIndex];
+    const optionsContainer = document.getElementById('options-container');
+    const buttons = optionsContainer.getElementsByClassName('option-btn');
+    const feedbackBox = document.getElementById('feedback-box');
+    
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = true;
+    }
+    
+    if (selectedIndex === qData.answer) {
+        buttons[selectedIndex].classList.add('correct');
+        score += 2;
+        correctCount++;
+        feedbackBox.innerText = `⭕ 答對了！得 2 分！\n${qData.feedback}`;
+        feedbackBox.classList.add('correct-bg');
+    } else {
+        buttons[selectedIndex].classList.add('wrong');
+        buttons[qData.answer].classList.add('correct');
+        feedbackBox.innerText = `❌ 哎呀，答錯囉！正確答案是【${['A','B','C','D'][qData.answer]}】\n${qData.feedback}`;
+        feedbackBox.classList.add('wrong-bg');
+    }
+    
+    document.getElementById('current-score').innerText = score;
+    feedbackBox.style.display = 'block';
+    document.getElementById('next-btn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < 50) {
+        showQuestion();
+    } else {
+        endGame();
+    }
+}
+
+function endGame() {
+    document.getElementById('game-screen').classList.remove('active');
+    document.getElementById('result-screen').classList.add('active');
+    document.getElementById('final-score').innerText = score;
+    document.getElementById('correct-count').innerText = correctCount;
+    
+    let evaluation = "";
+    if (score === 100) evaluation = "🏆 超凡入聖！【滿分問答大師】！✨";
+    else if (score >= 85) evaluation = "🌟 傲視群雄！【人文科小學霸】！";
+    else if (score >= 70) evaluation = "👍 根基紮實！【知識探險家】！";
+    else if (score >= 50) evaluation = "☘️ 穩步前進！【學習新星】！";
+    else evaluation = "🐾 初試身手！【新手上路】！再溫習一次吧！";
+    
+    document.getElementById('evaluation-text').innerText = evaluation;
+}
+
+function restartGame() {
+    document.getElementById('result-screen').classList.remove('active');
+    document.getElementById('welcome-screen').classList.add('active');
+}
+
+// 綁定控制按鈕
+document.getElementById('start-game-btn').addEventListener('click', startGame);
+document.getElementById('next-btn').addEventListener('click', nextQuestion);
+document.getElementById('restart-game-btn').addEventListener('click', restartGame);
+</script>
+
+</body>
+</html>
